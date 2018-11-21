@@ -13,4 +13,4 @@
 
 Route::get('/', 'PagesController@getIndex')->name('index');
 
-Route::resource('profile' ,'ProfileController');
+Route::get('profile/{winner}/{looser}' ,'ProfileController@update')->name('update');

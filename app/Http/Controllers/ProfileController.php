@@ -7,92 +7,19 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function update($winner, $looser)
     {
-        //
-    }
+        $winner = Profile::where('id', '=', strval($winner))->get();
+        $looser = Profile::where('id', '=', strval($looser))->get();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $rate = 1/(1 + pow(10, ($winner[0]->eloRating - $looser[0]->eloRating) / 100));
+        $winner[0]->eloRating = $winner[0]->eloRating + ($rate * 60);
+        $winner[0]->save();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Profile  $profile
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Profile $profile)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Profile  $profile
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Profile $profile)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Profile  $profile
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Profile $profile)
-    {
-        $this->validate($request, array(
-            'name' => 'required|max:255',
-            'eloRating' => 'required|number',
-            'imageUrl' => 'required|max:255'
-        ));
-
-
-        $profile->name = $request->input('name');
-        $profile->eloRating = $request->input('eloRating');
-        $profile->imageUrl = $request->input('imageUrl');
-
-        $profile->save();
+        $rate = 1/(1 + pow(10, ($looser[0]->eloRating - $winner[0]->eloRating) / 100));
+        $looser[0]->eloRating = $looser[0]->eloRating + ($rate * 60);
+        $looser[0]->save();
 
         return redirect()->route('index');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Profile  $profile
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Profile $profile)
-    {
-        //
     }
 }
