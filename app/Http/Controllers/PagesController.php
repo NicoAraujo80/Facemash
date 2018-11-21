@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Profile;
 
 class PagesController extends Controller
-{
+{   
+    # SHITTY CODE
     // public function getIndex() {
     // 	$randomEloRating = rand(300, 700);
     // 	$firstElo = $randomEloRating;
@@ -30,9 +31,14 @@ class PagesController extends Controller
     // 	return view('index')->withProfileOne($profileOne)->withProfileTwo($profileTwo)->withRandomElo($randomEloRating)->withFirstElo($firstElo);
     // }
 
+    # CLEANER CODE
     public function getIndex() {
-        $players = Profile::inRandomOrder()->limit(2)->get();
+        $randomProfile = Profile::inRandomOrder()->limit(1)->get()[0];
+        $similareElo = Profile::inRandomOrder()->whereBetween('eloRating', [$randomProfile->eloRating - 30, $randomProfile->eloRating + 30])->limit(1)->get()[0];
 
-        return view('index')->withProfiles($players);
+        # makes sure that the two profiles arent the same
+        while ($similareElo == $randomProfile) $similareElo = Profile::inRandomOrder()->whereBetween('eloRating', [$randomProfile->eloRating - 30, $randomProfile->eloRating + 30])->limit(1)->get()[0];
+
+        return view('index')->withProfiles([$randomProfile, $similareElo]);
     }
 }
